@@ -1,67 +1,93 @@
-import type { ShortenedUrl, UrlShortenerState } from "../types";
+import type { ShortenedUrl, UrlCreateOptions, ShortenResult } from "../types";
 import { useCallback, useEffect, useState } from "react";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { formatUrl, generateShortCode, validateUrl } from "../utils";
+import {
+  buildUtmUrl,
+  formatUrl,
+  generateShortCode,
+  validateAlias,
+  validateUrl,
+} from "../utils";
 
 const useUrls = () => {
-  const [state, setState] = useState<UrlShortenerState>({
-    urls: [],
-    isLoading: false,
-    error: null,
-  });
-
+  const [isLoading, setIsLoading] = useState(false);
   const [storedUrls, setStoredUrls] = useLocalStorage<ShortenedUrl[]>(
     "shortened-urls",
     [],
   );
+  const [urls, setUrls] = useState<ShortenedUrl[]>(storedUrls);
 
   useEffect(() => {
-    setState((prev) => ({ ...prev, urls: storedUrls }));
+    setUrls(storedUrls);
   }, [storedUrls]);
 
   const shortenUrl = useCallback(
-    async (originalUrl: string): Promise<void> => {
-      setState((prev) => ({ ...prev, isLoading: true, error: null }));
-
+    async (
+      originalUrl: string,
+      options?: UrlCreateOptions,
+    ): Promise<ShortenResult> => {
+      setIsLoading(true);
       try {
         const formattedUrl = formatUrl(originalUrl);
 
         if (!validateUrl(formattedUrl)) {
-          throw new Error("Please enter a valid URL");
+          return {
+            success: false,
+            error:
+              "That doesn't look like a real URL — try something like https://example.com",
+          };
         }
 
-        const existingUrl = storedUrls.find(
-          (url) => url.originalUrl === formattedUrl,
-        );
+        const finalUrl = options?.utmParams
+          ? buildUtmUrl(formattedUrl, options.utmParams)
+          : formattedUrl;
 
-        if (existingUrl) {
-          throw new Error("This URL has already been shortened");
+        const existing = storedUrls.find((u) => u.originalUrl === finalUrl);
+        if (existing) {
+          return {
+            success: false,
+            error: `This URL was already shortened — find it in your links below`,
+          };
         }
 
-        const shortCode = generateShortCode();
+        let shortCode: string;
+        if (options?.customAlias?.trim()) {
+          const alias = options.customAlias.trim();
+          if (!validateAlias(alias)) {
+            return {
+              success: false,
+              error:
+                "Alias must be 3–20 characters using only letters, numbers, hyphens, or underscores",
+            };
+          }
+          if (storedUrls.some((u) => u.shortCode === alias)) {
+            return {
+              success: false,
+              error: `"${alias}" is already taken — pick a different alias`,
+            };
+          }
+          shortCode = alias;
+        } else {
+          shortCode = generateShortCode(options?.codeLength ?? 6);
+        }
+
         const shortUrl = `https://zap.io/${shortCode}`;
-
         const newUrl: ShortenedUrl = {
           id: Date.now().toString(),
-          originalUrl: formattedUrl,
+          originalUrl: finalUrl,
           shortUrl,
           shortCode,
           createdAt: new Date(),
           clickCount: 0,
           isActive: true,
+          expiresAt: options?.expiresAt ?? null,
+          note: options?.note?.trim() || undefined,
         };
 
         setStoredUrls([newUrl, ...storedUrls]);
-      } catch (error) {
-        setState((prev) => ({
-          ...prev,
-          error:
-            error instanceof Error
-              ? error.message
-              : "An unknown error occurred",
-        }));
+        return { success: true, shortUrl };
       } finally {
-        setState((prev) => ({ ...prev, isLoading: false }));
+        setIsLoading(false);
       }
     },
     [storedUrls, setStoredUrls],
@@ -85,11 +111,7 @@ const useUrls = () => {
     [storedUrls, setStoredUrls],
   );
 
-  const clearError = useCallback(() => {
-    setState((prev) => ({ ...prev, error: null }));
-  }, []);
-
-  return { state, shortenUrl, deleteUrl, incrementClickCount, clearError };
+  return { urls, isLoading, shortenUrl, deleteUrl, incrementClickCount };
 };
 
 export default useUrls;

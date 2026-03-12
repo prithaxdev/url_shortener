@@ -3,13 +3,8 @@ import UrlForm from "./components/UrlForm";
 import UrlList from "./components/UrlList";
 
 const UrlsPage = () => {
-  const {
-    state: { urls, isLoading, error },
-    shortenUrl,
-    deleteUrl,
-    incrementClickCount,
-    clearError,
-  } = useUrls();
+  const { urls, isLoading, shortenUrl, deleteUrl, incrementClickCount } =
+    useUrls();
 
   const totalClicks = urls.reduce((sum, u) => sum + u.clickCount, 0);
 
@@ -31,12 +26,7 @@ const UrlsPage = () => {
             <div className="absolute top-1/3 right-4 w-3 h-3 rounded-full bg-[#34D399]/50 pointer-events-none" />
 
             <div className="relative z-10 w-full">
-              <UrlForm
-                onSubmit={shortenUrl}
-                isLoading={isLoading}
-                error={error}
-                onClearError={clearError}
-              />
+              <UrlForm onSubmit={shortenUrl} isLoading={isLoading} />
             </div>
           </div>
 
