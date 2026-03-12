@@ -1,9 +1,9 @@
-import type { ShortenedUrl, UrlShortenerState } from "@/types/url.types";
+import type { ShortenedUrl, UrlShortenerState } from "../types";
 import { useCallback, useEffect, useState } from "react";
-import useLocalStorage from "./useLocalStorage";
-import { formatUrl, generateShortCode, validateUrl } from "@/utils/urlUtils";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { formatUrl, generateShortCode, validateUrl } from "../utils";
 
-const useUrlShortener = () => {
+const useUrls = () => {
   const [state, setState] = useState<UrlShortenerState>({
     urls: [],
     isLoading: false,
@@ -12,7 +12,7 @@ const useUrlShortener = () => {
 
   const [storedUrls, setStoredUrls] = useLocalStorage<ShortenedUrl[]>(
     "shortened-urls",
-    []
+    [],
   );
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const useUrlShortener = () => {
         }
 
         const existingUrl = storedUrls.find(
-          (url) => url.originalUrl === formattedUrl
+          (url) => url.originalUrl === formattedUrl,
         );
 
         if (existingUrl) {
@@ -39,7 +39,7 @@ const useUrlShortener = () => {
         }
 
         const shortCode = generateShortCode();
-        const shortUrl = `https://short.ly/${shortCode}`;
+        const shortUrl = `https://zap.io/${shortCode}`;
 
         const newUrl: ShortenedUrl = {
           id: Date.now().toString(),
@@ -51,8 +51,7 @@ const useUrlShortener = () => {
           isActive: true,
         };
 
-        const updatedUrls = [newUrl, ...storedUrls];
-        setStoredUrls(updatedUrls);
+        setStoredUrls([newUrl, ...storedUrls]);
       } catch (error) {
         setState((prev) => ({
           ...prev,
@@ -65,38 +64,32 @@ const useUrlShortener = () => {
         setState((prev) => ({ ...prev, isLoading: false }));
       }
     },
-    [storedUrls, setStoredUrls]
+    [storedUrls, setStoredUrls],
   );
 
   const deleteUrl = useCallback(
     (id: string) => {
-      const updatedUrls = storedUrls.filter((url) => url.id !== id);
-      setStoredUrls(updatedUrls);
+      setStoredUrls(storedUrls.filter((url) => url.id !== id));
     },
-    [storedUrls, setStoredUrls]
+    [storedUrls, setStoredUrls],
   );
 
   const incrementClickCount = useCallback(
     (id: string) => {
-      const updatedUrls = storedUrls.map((url) =>
-        url.id === id ? { ...url, clickCount: url.clickCount + 1 } : url
+      setStoredUrls(
+        storedUrls.map((url) =>
+          url.id === id ? { ...url, clickCount: url.clickCount + 1 } : url,
+        ),
       );
-      setStoredUrls(updatedUrls);
     },
-    [storedUrls, setStoredUrls]
+    [storedUrls, setStoredUrls],
   );
 
   const clearError = useCallback(() => {
     setState((prev) => ({ ...prev, error: null }));
   }, []);
 
-  return {
-    state,
-    shortenUrl,
-    deleteUrl,
-    incrementClickCount,
-    clearError,
-  };
+  return { state, shortenUrl, deleteUrl, incrementClickCount, clearError };
 };
 
-export default useUrlShortener;
+export default useUrls;

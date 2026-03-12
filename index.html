@@ -1,19 +1,62 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/url-shortener.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>URL Shortener</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="/zap.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Zap | Make Your Links Shorter</title>
+        <meta
+            name="description"
+            content="Zap turns any long URL into a short, shareable link in seconds. Free, fast, and no sign-up required."
+        />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://zap.example.com/" />
+
+        <!-- Open Graph -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://zap.example.com/" />
+        <meta property="og:title" content="Zap — Make Your Links Shorter" />
+        <meta
+            property="og:description"
+            content="Zap turns any long URL into a short, shareable link in seconds. Free, fast, and no sign-up required."
+        />
+
+        <!-- Twitter Card -->
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Zap — Make Your Links Shorter" />
+        <meta
+            name="twitter:description"
+            content="Zap turns any long URL into a short, shareable link in seconds. Free, fast, and no sign-up required."
+        />
+
+        <!-- JSON-LD -->
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "WebApplication",
+                "name": "Zap",
+                "url": "https://zap.example.com/",
+                "description": "Zap turns any long URL into a short, shareable link in seconds. Free, fast, and no sign-up required.",
+                "applicationCategory": "UtilitiesApplication",
+                "operatingSystem": "All",
+                "offers": {
+                    "@type": "Offer",
+                    "price": "0",
+                    "priceCurrency": "USD"
+                }
+            }
+        </script>
+
+        <!-- Fonts: Outfit (headings) + Plus Jakarta Sans (body) -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="module" src="/src/main.tsx"></script>
+    </body>
 </html>

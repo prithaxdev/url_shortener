@@ -9,7 +9,14 @@ interface ConfirmDialogProps {
   confirmText?: string;
   cancelText?: string;
   onConfirm: () => void;
-  confirmVariant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined;
+  confirmVariant?:
+    | "default"
+    | "destructive"
+    | "secondary"
+    | "ghost"
+    | "outline"
+    | null
+    | undefined;
 }
 
 const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
@@ -35,20 +42,27 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       aria-modal="true"
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
     >
-      {/* Backdrop */}
+      {/* Soft backdrop */}
       <div
-        className="fixed inset-0 bg-background/80 backdrop-blur-sm"
+        className="fixed inset-0 bg-[#1E293B]/50 backdrop-blur-sm rounded-4xl"
         onClick={() => onOpenChange(false)}
       />
 
-      {/* Content */}
-      <div className="relative z-10 w-full max-w-md rounded-lg border bg-card text-card-foreground shadow-lg">
+      {/* Dialog — pops in with animation */}
+      <div className="relative z-10 w-full max-w-md bg-white border-2 border-[#1E293B] rounded-2xl shadow-[8px_8px_0px_0px_#1E293B] animate-pop-in">
+        {/* Decorative corner accent */}
+        <div className="absolute -top-3 -right-3 w-6 h-6 rounded-full bg-[#F472B6] border-2 border-[#1E293B]" />
+
         <div className="p-6">
-          <h2 className="text-lg font-semibold">{title}</h2>
-          <p className="mt-2 text-sm text-muted-foreground">{description}</p>
+          <h2 className="font-display text-xl font-bold text-[#1E293B]">
+            {title}
+          </h2>
+          <p className="text-sm text-[#64748B] mt-2 font-medium">
+            {description}
+          </p>
         </div>
-        <div className="flex items-center justify-end gap-2 border-t p-4">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+        <div className="flex items-center justify-end gap-3 border-t-2 border-[#E2E8F0] p-4">
+          <Button variant="secondary" onClick={() => onOpenChange(false)}>
             {cancelText}
           </Button>
           <Button variant={confirmVariant} onClick={handleConfirm}>
