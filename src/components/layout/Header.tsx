@@ -1,4 +1,35 @@
-import { Zap } from "lucide-react";
+import { Github, Star, Zap } from "lucide-react";
+import { useEffect, useState } from "react";
+
+const REPO = "prithaxdev/url_shortener";
+
+const GitHubStars = () => {
+  const [stars, setStars] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch(`https://api.github.com/repos/${REPO}`)
+      .then((r) => r.json())
+      .then((d) => setStars(d.stargazers_count ?? null))
+      .catch(() => {});
+  }, []);
+
+  return (
+    <a
+      href={`https://github.com/${REPO}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 border-[#1E293B] bg-[#FFFDF5] shadow-[2px_2px_0px_0px_#1E293B] hover:shadow-[3px_3px_0px_0px_#1E293B] hover:-translate-y-0.5 transition-all duration-150 text-[#1E293B] font-bold text-xs"
+    >
+      <Github className="size-3.5" strokeWidth={2.5} />
+      {stars !== null && (
+        <>
+          <Star className="size-3 fill-[#FBBF24] text-[#FBBF24]" />
+          <span>{stars.toLocaleString()}</span>
+        </>
+      )}
+    </a>
+  );
+};
 
 const Header = () => {
   return (
@@ -17,16 +48,19 @@ const Header = () => {
           </span>
         </div>
 
-        {/* Right: confetti dots + tagline */}
-        <div className="flex items-center gap-2.5">
-          <div className="flex items-center gap-1">
-            <div className="w-2 h-2 rounded-full bg-[#8B5CF6]" />
-            <div className="w-2 h-2 rounded-full bg-[#F472B6]" />
-            <div className="w-2 h-2 rounded-full bg-[#FBBF24]" />
+        {/* Right: GitHub stars + confetti dots + tagline */}
+        <div className="flex items-center gap-3">
+          <GitHubStars />
+          <div className="hidden sm:flex items-center gap-2.5">
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-[#8B5CF6]" />
+              <div className="w-2 h-2 rounded-full bg-[#F472B6]" />
+              <div className="w-2 h-2 rounded-full bg-[#FBBF24]" />
+            </div>
+            <span className="text-xs font-bold text-[#94A3B8] tracking-wider uppercase">
+              Free URL Shortener
+            </span>
           </div>
-          <span className="hidden sm:block text-xs font-bold text-[#94A3B8] tracking-wider uppercase">
-            Free URL Shortener
-          </span>
         </div>
       </nav>
     </header>
