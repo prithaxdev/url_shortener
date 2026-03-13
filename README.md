@@ -1,6 +1,6 @@
-# Zap — URL Shortener
+# Zap | URL Shortener
 
-A fast, client-side URL shortener with a playful geometric design. No backend, no account required — everything lives in your browser.
+A fast, client-side URL shortener with a playful geometric design. No backend, no account required, everything lives in your browser.
 
 **Live:** [https://zap-it.vercel.app/]
 
