@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { ShortenedUrl } from "../types";
 import {
+  buildShortUrl,
   copyToClipboard,
   formatDate,
   getCompression,
@@ -14,16 +15,18 @@ import {
 const EXAMPLE = {
   originalUrl:
     "https://docs.google.com/document/d/1xQ4mP8vZr2KfT0bW9nYcL3hJ7/edit?usp=sharing&utm_source=newsletter",
-  shortUrl: "https://zap.io/Xp4kR2",
+  shortUrl: buildShortUrl("Xp4kR2"),
 };
 
 // Keep the tape inside the card for long custom aliases
 const tapeSize = (length: number) =>
   length <= 16
     ? "text-[22px] sm:text-[28px]"
-    : length <= 22
-      ? "text-lg sm:text-[24px]"
-      : "text-[15px] sm:text-lg";
+    : length <= 26
+      ? "text-base sm:text-2xl"
+      : length <= 32
+        ? "text-sm sm:text-xl"
+        : "text-xs sm:text-base";
 
 const LinkLabel = memo<{ url?: ShortenedUrl }>(({ url }) => {
   const { originalUrl, shortUrl } = url ?? EXAMPLE;

@@ -57,7 +57,11 @@ const buildUtmUrl = (
   return u.toString();
 };
 
-// "https://zap.io/spr26" → { domain: "zap.io/", code: "spr26" }
+// Short links live on the app's own domain so the app can resolve them
+const buildShortUrl = (code: string): string =>
+  `${window.location.origin}/${code}`;
+
+// "https://zap-it.vercel.app/spr26" → { domain: "zap-it.vercel.app/", code: "spr26" }
 const splitShortUrl = (shortUrl: string) => {
   const bare = shortUrl.replace(/^https?:\/\//, "");
   const slash = bare.lastIndexOf("/") + 1;
@@ -88,6 +92,7 @@ export {
   copyToClipboard,
   validateAlias,
   buildUtmUrl,
+  buildShortUrl,
   splitShortUrl,
   formatDate,
   getCompression,

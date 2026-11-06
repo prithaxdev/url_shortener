@@ -1,12 +1,16 @@
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import UrlsPage from "@/features/urls";
+import UrlsPage, { ShortLinkStatus, type ShortPathResult } from "@/features/urls";
 
-function App() {
+function App({ shortPath }: { shortPath: ShortPathResult }) {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
-      <UrlsPage />
+      {shortPath.status === "none" ? (
+        <UrlsPage />
+      ) : (
+        <ShortLinkStatus result={shortPath} />
+      )}
       <Footer />
     </div>
   );

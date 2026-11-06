@@ -2,6 +2,7 @@ import type { ShortenedUrl, UrlCreateOptions, ShortenResult } from "../types";
 import { useCallback, useEffect, useState } from "react";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import {
+  buildShortUrl,
   buildUtmUrl,
   formatUrl,
   generateShortCode,
@@ -9,16 +10,23 @@ import {
   validateUrl,
 } from "../utils";
 
+// Links saved before short URLs moved to the app's domain still point at
+// zap.io, so always derive the short URL from the code
+const withCurrentDomain = (list: ShortenedUrl[]) =>
+  list.map((url) => ({ ...url, shortUrl: buildShortUrl(url.shortCode) }));
+
 const useUrls = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [storedUrls, setStoredUrls] = useLocalStorage<ShortenedUrl[]>(
     "shortened-urls",
     [],
   );
-  const [urls, setUrls] = useState<ShortenedUrl[]>(storedUrls);
+  const [urls, setUrls] = useState<ShortenedUrl[]>(() =>
+    withCurrentDomain(storedUrls),
+  );
 
   useEffect(() => {
-    setUrls(storedUrls);
+    setUrls(withCurrentDomain(storedUrls));
   }, [storedUrls]);
 
   const shortenUrl = useCallback(
@@ -71,7 +79,7 @@ const useUrls = () => {
           shortCode = generateShortCode(options?.codeLength ?? 6);
         }
 
-        const shortUrl = `https://zap.io/${shortCode}`;
+        const shortUrl = buildShortUrl(shortCode);
         const newUrl: ShortenedUrl = {
           id: Date.now().toString(),
           originalUrl: finalUrl,

@@ -108,7 +108,7 @@ const UrlForm = memo<{
     if (result.success) {
       sileo.success({
         title: "Link zapped",
-        description: `${result.shortUrl} is ready to share`,
+        description: `${result.shortUrl} is ready`,
       });
       setInputUrl("");
       setCustomAlias("");
@@ -139,8 +139,8 @@ const UrlForm = memo<{
         Make your links tiny
       </h1>
       <p className="mt-4 max-w-[28rem] text-lg leading-7 text-subtle">
-        Paste a long URL and get a short link you can share. Free, no sign-up,
-        saved in your browser.
+        Paste a long URL and get a short one. Free, no account needed. Links
+        are saved in this browser and only open here.
       </p>
 
       {/* Main input row */}
@@ -201,7 +201,7 @@ const UrlForm = memo<{
               </label>
               <div className="flex h-10 items-center rounded-lg border border-input bg-card transition-[border-color,box-shadow] duration-150 ease-snap focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/12">
                 <span className="pl-3 font-mono text-sm text-muted-foreground">
-                  zap.io/
+                  {window.location.host}/
                 </span>
                 <input
                   id="alias"
