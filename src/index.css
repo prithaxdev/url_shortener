@@ -3,94 +3,133 @@
 
 @theme inline {
   /* Typography */
-  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-display: 'Outfit', system-ui, sans-serif;
-
-  /* Radius scale */
-  --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-xl: 32px;
-  --radius-full: 9999px;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /* Color tokens — mapped from CSS vars */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
+  --color-card-foreground: var(--foreground);
+  --color-popover: var(--card);
+  --color-popover-foreground: var(--foreground);
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--foreground);
+  --color-muted: var(--secondary);
   --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
+  --color-subtle: var(--subtle);
+  --color-accent: var(--secondary);
+  --color-accent-foreground: var(--foreground);
   --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-hover: var(--destructive-hover);
+  --color-destructive-foreground: var(--primary-foreground);
+  --color-warning: var(--warning);
   --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--border-strong);
+  --color-ring: var(--primary);
 
-  /* Brand confetti palette */
-  --color-violet: var(--violet);
-  --color-pink: var(--pink);
-  --color-amber: var(--amber);
-  --color-mint: var(--mint);
+  /* Depth — neutral, soft, small */
+  --shadow-raised: 0 1px 2px rgb(31 27 22 / 0.05);
+  --shadow-float: 0 1px 2px rgb(31 27 22 / 0.04), 0 12px 32px rgb(31 27 22 / 0.07);
+  --shadow-dialog: 0 24px 64px rgb(31 27 22 / 0.18);
 
-  /* Custom animations */
-  --animate-wiggle: wiggle 0.4s ease-in-out;
-  --animate-pop-in: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  /* Motion — one curve everywhere */
+  --ease-snap: cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-rise: rise 400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-dialog-in: rise 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade-in: fade-in 160ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 :root {
-  --background: #FFFDF5;
-  --foreground: #1E293B;
-  --card: #FFFFFF;
-  --card-foreground: #1E293B;
-  --popover: #FFFFFF;
-  --popover-foreground: #1E293B;
-  --primary: #8B5CF6;
-  --primary-foreground: #FFFFFF;
-  --secondary: #F1F5F9;
-  --secondary-foreground: #1E293B;
-  --muted: #F1F5F9;
-  --muted-foreground: #64748B;
-  --accent: #FBBF24;
-  --accent-foreground: #1E293B;
-  --destructive: #F472B6;
-  --destructive-foreground: #FFFFFF;
-  --border: #E2E8F0;
-  --input: #FFFFFF;
-  --ring: #8B5CF6;
+  /* Warm neutral ramp — paper and label stock */
+  --background: #f7f5f0;
+  --card: #fdfcf9;
+  --secondary: #efebe3;
+  --foreground: #1f1b16;
+  --subtle: #5e554a;
+  --muted-foreground: #736a5e;
+  --border: rgb(31 27 22 / 0.09);
+  --border-strong: rgb(31 27 22 / 0.16);
 
-  /* Confetti palette */
-  --violet: #8B5CF6;
-  --pink: #F472B6;
-  --amber: #FBBF24;
-  --mint: #34D399;
+  /* One accent, from the logo */
+  --primary: #7c3aed;
+  --primary-hover: #6d28d9;
+  --primary-foreground: #ffffff;
+
+  /* Semantic, toned to the ramp */
+  --destructive: #c8322b;
+  --destructive-hover: #ad2a24;
+  --warning: #9a5b0b;
 }
 
-@keyframes wiggle {
-  0%, 100% { transform: rotate(0deg) scale(1); }
-  33%       { transform: rotate(-2deg) scale(1.02); }
-  66%       { transform: rotate(2deg) scale(1.02); }
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
 }
 
-@keyframes pop-in {
-  0%   { transform: scale(0.6); opacity: 0; }
-  70%  { transform: scale(1.05); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
 }
 
 @layer base {
   * {
     @apply border-border;
   }
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
   body {
     @apply bg-background text-foreground font-sans;
+  }
+  ::selection {
+    background-color: rgb(124 58 237 / 0.18);
+  }
+}
+
+@layer components {
+  /* Embossed label tape — the short link as a physical label */
+  .label-tape {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    height: 56px;
+    padding: 0 24px;
+    border-radius: 3px;
+    background: linear-gradient(180deg, #8648f0 0%, #7c3aed 48%, #6f30dc 100%);
+    clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+    color: rgb(255 255 255 / 0.95);
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    text-shadow:
+      0 1px 0 rgb(46 16 101 / 0.55),
+      0 -1px 0 rgb(255 255 255 / 0.18);
+  }
+  @media (width >= 40rem) {
+    .label-tape {
+      height: 64px;
+    }
+  }
+  .label-tape::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0) 42%);
+    pointer-events: none;
+  }
+  .label-tape-shadow {
+    filter: drop-shadow(0 1px 1px rgb(31 27 22 / 0.18)) drop-shadow(0 8px 12px rgb(31 27 22 / 0.14));
   }
 }
 

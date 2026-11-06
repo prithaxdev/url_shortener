@@ -1,7 +1,8 @@
 import { memo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, Settings2, Zap } from "lucide-react";
+import { ChevronDown, SlidersHorizontal, Zap } from "lucide-react";
+import { cn } from "@/lib/utils";
 import type { UrlCreateOptions, ShortenResult } from "../types";
 import { sileo } from "sileo";
 
@@ -15,10 +16,48 @@ const EXPIRY_OPTIONS = [
   { label: "30 days", days: 30 },
 ] as const;
 
-const pill =
-  "px-3 py-1 rounded-full text-xs font-bold border-2 border-[#1E293B] cursor-pointer transition-all duration-150 select-none";
-const pillOn = "bg-[#8B5CF6] text-white shadow-[2px_2px_0px_0px_#1E293B]";
-const pillOff = "bg-white text-[#1E293B] hover:bg-[#F1F5F9]";
+const fieldLabel = "mb-2 block text-[13px] font-medium text-foreground";
+const disclosure =
+  "-ml-2 inline-flex h-8 items-center gap-2 rounded-md px-2 text-sm text-subtle transition-colors duration-150 ease-snap hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+
+const Segmented = <T,>({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: readonly { label: string; value: T }[];
+  value: T;
+  onChange: (value: T) => void;
+}) => (
+  <div
+    role="radiogroup"
+    aria-label={label}
+    className="inline-flex flex-wrap rounded-lg bg-secondary p-0.5"
+  >
+    {options.map((opt) => {
+      const active = opt.value === value;
+      return (
+        <button
+          key={opt.label}
+          type="button"
+          role="radio"
+          aria-checked={active}
+          onClick={() => onChange(opt.value)}
+          className={cn(
+            "h-8 min-w-10 rounded-md px-3 text-[13px] font-medium tabular-nums transition-[color,background-color,box-shadow] duration-150 ease-snap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            active
+              ? "bg-card text-foreground shadow-[0_1px_2px_rgb(31_27_22/0.08),0_0_0_1px_rgb(31_27_22/0.06)]"
+              : "text-subtle hover:text-foreground",
+          )}
+        >
+          {opt.label}
+        </button>
+      );
+    })}
+  </div>
+);
 
 const UrlForm = memo<{
   onSubmit: (
@@ -68,7 +107,7 @@ const UrlForm = memo<{
 
     if (result.success) {
       sileo.success({
-        title: "Link zapped!",
+        title: "Link zapped",
         description: `${result.shortUrl} is ready to share`,
       });
       setInputUrl("");
@@ -95,198 +134,168 @@ const UrlForm = memo<{
   };
 
   return (
-    <div className="space-y-6">
-      {/* Headline */}
-      <div>
-        <h1 className="font-display font-black text-4xl sm:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-[#1E293B]">
-          Make your
-          <br />
-          <span className="text-[#8B5CF6]">links</span> tiny.
-        </h1>
-        <p className="mt-4 text-base font-medium text-[#64748B] max-w-sm">
-          Paste a long URL and get a short, shareable link in seconds. Free. No
-          sign-up.
-        </p>
-      </div>
+    <div>
+      <h1 className="text-[40px] leading-[1.08] font-medium tracking-[-0.02em] text-balance text-foreground sm:text-5xl lg:text-[56px] lg:tracking-[-0.03em]">
+        Make your links tiny
+      </h1>
+      <p className="mt-4 max-w-[28rem] text-lg leading-7 text-subtle">
+        Paste a long URL and get a short link you can share. Free, no sign-up,
+        saved in your browser.
+      </p>
 
       {/* Main input row */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <Input
           type="url"
           value={inputUrl}
-          placeholder="Paste your URL here..."
+          aria-label="Long URL"
+          placeholder="Paste a long URL"
           onChange={(e) => setInputUrl(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter" && inputUrl.trim() && !isLoading) {
               handleSubmit();
             }
           }}
-          className="flex-1 min-w-0 h-14 sm:h-12 py-4"
+          className="h-12 w-full min-w-0 px-4 text-[15px] sm:flex-1"
         />
         <Button
+          size="lg"
           onClick={handleSubmit}
           disabled={!inputUrl.trim() || isLoading}
-          className="w-full sm:w-auto sm:flex-shrink-0 h-14 sm:h-11"
+          className="w-full sm:w-auto"
         >
           {isLoading ? (
-            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            <div className="size-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
           ) : (
-            <>
-              <Zap className="size-4" strokeWidth={2.5} />
-              Zap it
-            </>
+            <Zap strokeWidth={1.5} />
           )}
+          Zap it
         </Button>
       </div>
 
       {/* Advanced options */}
-      <div>
+      <div className="mt-4">
         <button
           type="button"
+          aria-expanded={showAdvanced}
           onClick={() => setShowAdvanced((v) => !v)}
-          className="flex items-center gap-1.5 text-xs font-semibold text-[#64748B] hover:text-[#8B5CF6] transition-colors"
+          className={disclosure}
         >
-          <Settings2 className="size-3.5" strokeWidth={2.5} />
+          <SlidersHorizontal className="size-4 text-muted-foreground" strokeWidth={1.5} />
           Advanced options
           <ChevronDown
-            className={`size-3.5 transition-transform duration-200 ${showAdvanced ? "rotate-180" : ""}`}
-            strokeWidth={2.5}
+            className={cn(
+              "size-4 text-muted-foreground transition-transform duration-200 ease-snap",
+              showAdvanced && "rotate-180",
+            )}
+            strokeWidth={1.5}
           />
         </button>
 
         {showAdvanced && (
-          <div className="mt-3 p-4 rounded-xl border-2 border-[#1E293B] bg-[#FDFAF0] shadow-[4px_4px_0px_0px_#FBBF24] space-y-4">
+          <div className="mt-2 grid animate-dialog-in gap-5 rounded-xl border border-border bg-card p-5 shadow-raised">
             {/* Custom alias */}
             <div>
-              <label className="text-xs font-bold text-[#1E293B] mb-1.5 block">
+              <label htmlFor="alias" className={fieldLabel}>
                 Custom alias
               </label>
-              <div className="flex items-center">
-                <span className="px-3 h-10 flex items-center bg-[#F1F5F9] border-2 border-r-0 border-[#1E293B] rounded-l-lg text-xs font-bold text-[#64748B] whitespace-nowrap">
+              <div className="flex h-10 items-center rounded-lg border border-input bg-card transition-[border-color,box-shadow] duration-150 ease-snap focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/12">
+                <span className="pl-3 font-mono text-sm text-muted-foreground">
                   zap.io/
                 </span>
-                <Input
+                <input
+                  id="alias"
                   value={customAlias}
                   onChange={(e) => setCustomAlias(e.target.value)}
                   placeholder="my-link"
-                  className="rounded-l-none h-10 text-sm border-l-0 focus-visible:ring-0"
+                  className="h-full min-w-0 flex-1 bg-transparent pr-3 font-mono text-sm text-foreground outline-none placeholder:text-muted-foreground"
                 />
               </div>
-              <p className="text-xs text-[#94A3B8] mt-1">
-                Letters, numbers, hyphens, underscores · 3–20 chars
+              <p className="mt-2 text-xs text-muted-foreground">
+                Letters, numbers, hyphens and underscores, 3–20 characters
               </p>
             </div>
 
             {/* Code length (hidden when custom alias is set) */}
             {!customAlias.trim() && (
               <div>
-                <label className="text-xs font-bold text-[#1E293B] mb-1.5 block">
-                  Code length
-                </label>
-                <div className="flex gap-2">
-                  {LENGTHS.map((len) => (
-                    <button
-                      key={len}
-                      type="button"
-                      onClick={() => setCodeLength(len)}
-                      className={`${pill} ${codeLength === len ? pillOn : pillOff}`}
-                    >
-                      {len}
-                    </button>
-                  ))}
-                </div>
+                <span className={fieldLabel}>Code length</span>
+                <Segmented
+                  label="Code length"
+                  options={LENGTHS.map((len) => ({ label: String(len), value: len }))}
+                  value={codeLength}
+                  onChange={setCodeLength}
+                />
               </div>
             )}
 
             {/* Link expiry */}
             <div>
-              <label className="text-xs font-bold text-[#1E293B] mb-1.5 block">
-                Link expiry
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {EXPIRY_OPTIONS.map((opt) => (
-                  <button
-                    key={opt.label}
-                    type="button"
-                    onClick={() => setExpiryDays(opt.days)}
-                    className={`${pill} ${expiryDays === opt.days ? pillOn : pillOff}`}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
+              <span className={fieldLabel}>Link expiry</span>
+              <Segmented
+                label="Link expiry"
+                options={EXPIRY_OPTIONS.map((opt) => ({ label: opt.label, value: opt.days }))}
+                value={expiryDays}
+                onChange={setExpiryDays}
+              />
             </div>
 
             {/* Note */}
             <div>
-              <label className="text-xs font-bold text-[#1E293B] mb-1.5 block">
-                Note{" "}
-                <span className="text-[#94A3B8] font-medium">
-                  (private, for your reference)
+              <label htmlFor="note" className={fieldLabel}>
+                Note
+                <span className="ml-2 font-normal text-muted-foreground">
+                  Only visible to you
                 </span>
               </label>
               <Input
+                id="note"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="What's this link for?"
-                className="h-10 text-sm"
               />
             </div>
 
             {/* UTM tracking */}
-            <div>
+            <div className="border-t border-border pt-4">
               <button
                 type="button"
+                aria-expanded={showUtm}
                 onClick={() => setShowUtm((v) => !v)}
-                className="flex items-center gap-1.5 text-xs font-semibold text-[#64748B] hover:text-[#8B5CF6] transition-colors"
+                className={disclosure}
               >
                 UTM tracking
+                {hasUtm && <span className="text-xs text-primary">On</span>}
                 <ChevronDown
-                  className={`size-3 transition-transform duration-200 ${showUtm ? "rotate-180" : ""}`}
-                  strokeWidth={2.5}
+                  className={cn(
+                    "size-4 text-muted-foreground transition-transform duration-200 ease-snap",
+                    showUtm && "rotate-180",
+                  )}
+                  strokeWidth={1.5}
                 />
-                {hasUtm && (
-                  <span className="ml-1 px-1.5 py-0.5 rounded-full bg-[#34D399]/30 border border-[#34D399] text-[10px] font-bold text-[#1E293B]">
-                    on
-                  </span>
-                )}
               </button>
 
               {showUtm && (
-                <div className="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  <div>
-                    <label className="text-[10px] font-bold text-[#94A3B8] mb-1 block uppercase tracking-wide">
-                      Source
-                    </label>
-                    <Input
-                      value={utmSource}
-                      onChange={(e) => setUtmSource(e.target.value)}
-                      placeholder="e.g. twitter"
-                      className="h-9 text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-bold text-[#94A3B8] mb-1 block uppercase tracking-wide">
-                      Medium
-                    </label>
-                    <Input
-                      value={utmMedium}
-                      onChange={(e) => setUtmMedium(e.target.value)}
-                      placeholder="e.g. social"
-                      className="h-9 text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-bold text-[#94A3B8] mb-1 block uppercase tracking-wide">
-                      Campaign
-                    </label>
-                    <Input
-                      value={utmCampaign}
-                      onChange={(e) => setUtmCampaign(e.target.value)}
-                      placeholder="e.g. launch"
-                      className="h-9 text-sm"
-                    />
-                  </div>
+                <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  {(
+                    [
+                      ["utm-source", "Source", utmSource, setUtmSource, "twitter"],
+                      ["utm-medium", "Medium", utmMedium, setUtmMedium, "social"],
+                      ["utm-campaign", "Campaign", utmCampaign, setUtmCampaign, "launch"],
+                    ] as const
+                  ).map(([id, label, value, setValue, example]) => (
+                    <div key={id}>
+                      <label htmlFor={id} className="mb-2 block text-xs text-subtle">
+                        {label}
+                      </label>
+                      <Input
+                        id={id}
+                        value={value}
+                        onChange={(e) => setValue(e.target.value)}
+                        placeholder={example}
+                      />
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

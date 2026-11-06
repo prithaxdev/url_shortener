@@ -10,12 +10,12 @@ const UrlList = memo<{
 }>(({ urls, onDelete, onVisit }) => {
   if (urls.length === 0) {
     return (
-      <div className="text-center py-16">
-        <div className="w-20 h-20 rounded-full bg-[#F1F5F9] border-2 border-[#E2E8F0] flex items-center justify-center mx-auto mb-5">
-          <Link2 className="size-8 text-[#94A3B8]" strokeWidth={2} />
+      <div className="rounded-xl border border-dashed border-border-strong px-6 py-16 text-center">
+        <div className="mx-auto flex size-10 items-center justify-center rounded-lg bg-secondary">
+          <Link2 className="size-4 text-muted-foreground" strokeWidth={1.5} />
         </div>
-        <p className="font-display font-bold text-xl text-[#1E293B]">No links yet</p>
-        <p className="text-sm text-[#64748B] mt-1.5 font-medium">
+        <p className="mt-4 text-base font-medium text-foreground">No links yet</p>
+        <p className="mt-1 text-sm text-subtle">
           Paste a URL above to get your first short link
         </p>
       </div>
@@ -24,13 +24,13 @@ const UrlList = memo<{
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="font-display font-bold text-2xl text-[#1E293B]">Your links</h2>
-        <span className="bg-[#8B5CF6]/10 border-2 border-[#8B5CF6] rounded-full px-4 py-1 text-sm font-bold text-[#8B5CF6]">
-          {urls.length} {urls.length === 1 ? "link" : "links"}
+      <div className="mb-4 flex items-baseline justify-between">
+        <h2 className="text-xl font-medium text-foreground">Your links</h2>
+        <span className="font-mono text-sm text-muted-foreground tabular-nums">
+          {urls.length.toLocaleString()} {urls.length === 1 ? "link" : "links"}
         </span>
       </div>
-      <div className="space-y-4">
+      <div className="space-y-3">
         {urls.map((url) => (
           <UrlCard key={url.id} url={url} onDelete={onDelete} onVisit={onVisit} />
         ))}

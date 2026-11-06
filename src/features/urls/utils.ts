@@ -57,6 +57,30 @@ const buildUtmUrl = (
   return u.toString();
 };
 
+// "https://zap.io/spr26" → { domain: "zap.io/", code: "spr26" }
+const splitShortUrl = (shortUrl: string) => {
+  const bare = shortUrl.replace(/^https?:\/\//, "");
+  const slash = bare.lastIndexOf("/") + 1;
+  return { domain: bare.slice(0, slash), code: bare.slice(slash) };
+};
+
+const formatDate = (date: Date | string): string => {
+  const d = new Date(date);
+  const sameYear = d.getFullYear() === new Date().getFullYear();
+  return d.toLocaleDateString(undefined, {
+    day: "numeric",
+    month: "short",
+    ...(sameYear ? {} : { year: "numeric" }),
+  });
+};
+
+// Character counts before and after, or null when the short link isn't shorter
+const getCompression = (originalUrl: string, shortUrl: string) => {
+  const from = originalUrl.length;
+  const to = shortUrl.length;
+  return to < from ? { from, to } : null;
+};
+
 export {
   generateShortCode,
   validateUrl,
@@ -64,4 +88,7 @@ export {
   copyToClipboard,
   validateAlias,
   buildUtmUrl,
+  splitShortUrl,
+  formatDate,
+  getCompression,
 };
