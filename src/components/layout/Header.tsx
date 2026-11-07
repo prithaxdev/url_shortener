@@ -3,14 +3,33 @@ import { useEffect, useState } from "react";
 import Logo from "./Logo";
 
 const REPO = "prithaxdev/url_shortener";
+const STARS_KEY = "zap-github-stars";
+
+const cachedStars = () => {
+  try {
+    const n = Number(localStorage.getItem(STARS_KEY));
+    return Number.isFinite(n) && n > 0 ? n : null;
+  } catch {
+    return null;
+  }
+};
 
 const GitHubStars = () => {
-  const [stars, setStars] = useState<number | null>(null);
+  // Last known count renders instantly; the fetch only refreshes it
+  const [stars, setStars] = useState<number | null>(cachedStars);
 
   useEffect(() => {
     fetch(`https://api.github.com/repos/${REPO}`)
       .then((r) => r.json())
-      .then((d) => setStars(d.stargazers_count ?? null))
+      .then((d) => {
+        if (typeof d.stargazers_count !== "number") return;
+        setStars(d.stargazers_count);
+        try {
+          localStorage.setItem(STARS_KEY, String(d.stargazers_count));
+        } catch {
+          // Storage blocked, the count just won't be cached
+        }
+      })
       .catch(() => {});
   }, []);
 
@@ -24,12 +43,13 @@ const GitHubStars = () => {
     >
       <Github className="size-4 text-muted-foreground" strokeWidth={1.5} />
       GitHub
-      {stars !== null && (
-        <span className="flex items-center gap-1 border-l border-border pl-2 font-mono text-xs text-subtle tabular-nums">
-          <Star className="size-3.5 text-muted-foreground" strokeWidth={1.5} />
-          {stars.toLocaleString()}
+      {/* Always rendered with room for the count, so the header never shifts */}
+      <span className="flex items-center gap-1 border-l border-border pl-2 font-mono text-xs text-subtle tabular-nums">
+        <Star className="size-3.5 text-muted-foreground" strokeWidth={1.5} />
+        <span className="min-w-[2ch]">
+          {stars?.toLocaleString()}
         </span>
-      )}
+      </span>
     </a>
   );
 };

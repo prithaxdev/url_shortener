@@ -1,3 +1,4 @@
+import { CuriousGlobeSticker } from "stick-it-up";
 import { Button } from "@/components/ui/button";
 import type { ShortPathResult } from "../redirect";
 
@@ -29,6 +30,9 @@ const ShortLinkStatus = ({
   return (
     <main className="flex flex-1 items-center justify-center px-6 py-24">
       <div className="w-full max-w-md animate-rise">
+        <span aria-hidden className="mb-6 inline-block animate-pop rotate-6 [animation-delay:200ms]">
+          <CuriousGlobeSticker size={72} />
+        </span>
         <p className="font-mono text-sm text-muted-foreground">{link}</p>
         <h1 className="mt-3 text-2xl font-medium tracking-[-0.01em] text-foreground">
           {copy.title}

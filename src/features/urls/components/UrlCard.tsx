@@ -11,6 +11,7 @@ import {
 import { sileo } from "sileo";
 import { Copy, ExternalLink, StickyNote, Trash2 } from "lucide-react";
 import { memo, useState } from "react";
+import LinkSticker from "./LinkSticker";
 
 const getExpiryInfo = (expiresAt?: Date | null) => {
   if (!expiresAt) return null;
@@ -87,40 +88,25 @@ const UrlCard = memo<{
   ].filter((item) => !!item);
 
   return (
-    <article className="rounded-xl border border-border bg-card p-5 shadow-raised transition-[border-color,box-shadow] duration-150 ease-snap hover:border-border-strong hover:shadow-float">
-      <div className="flex items-start gap-4">
-        <div className="min-w-0 flex-1">
-          <p className="truncate font-mono text-base leading-8 font-medium">
-            <span className="text-muted-foreground">{domain}</span>
-            <span className={isExpired ? "text-muted-foreground" : "text-foreground"}>
-              {code}
-            </span>
-          </p>
-          <div className="flex items-center gap-1">
-            <p className="truncate text-sm text-subtle" title={url.originalUrl}>
-              {url.originalUrl}
-            </p>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleCopyOriginal}
-              title="Copy original URL"
-              aria-label="Copy original URL"
-              className="size-7 shrink-0"
-            >
-              <Copy strokeWidth={1.5} />
-            </Button>
-          </div>
-        </div>
+    <article className="rounded-2xl border border-border bg-card p-5 shadow-raised transition-[border-color,box-shadow] duration-150 ease-snap hover:border-border-strong hover:shadow-float">
+      <div className="flex items-center gap-4">
+        <p className="flex min-w-0 flex-1 items-center gap-1 font-mono text-[15px] leading-8">
+          <span className="hidden truncate text-muted-foreground sm:inline">{domain}</span>
+          <LinkSticker size="sm" faded={isExpired} className="shrink-0 -rotate-2">
+            {code}
+          </LinkSticker>
+        </p>
         <div className="flex shrink-0 items-center gap-1">
           <Button
-            variant="ghost"
-            size="icon"
+            variant="secondary"
+            size="sm"
             onClick={handleCopy}
             title="Copy short URL"
             aria-label="Copy short URL"
+            className="mr-1"
           >
             <Copy strokeWidth={1.5} />
+            <span className="hidden sm:inline">Copy</span>
           </Button>
           <Button
             variant="ghost"
@@ -142,6 +128,22 @@ const UrlCard = memo<{
             <Trash2 strokeWidth={1.5} />
           </Button>
         </div>
+      </div>
+
+      <div className="mt-2 flex items-center gap-1">
+        <p className="truncate text-sm text-subtle" title={url.originalUrl}>
+          {url.originalUrl}
+        </p>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleCopyOriginal}
+          title="Copy original URL"
+          aria-label="Copy original URL"
+          className="size-7 shrink-0"
+        >
+          <Copy strokeWidth={1.5} />
+        </Button>
       </div>
 
       {url.note && (

@@ -1,10 +1,16 @@
-import { memo, useState } from "react";
+import { Fragment, memo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, SlidersHorizontal, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { UrlCreateOptions, ShortenResult } from "../types";
 import { sileo } from "sileo";
+
+// Two fixed lines, so the wrap never depends on which font has loaded
+const HEADLINE = [
+  ["Short", "links"],
+  ["that", "stick"],
+];
 
 const LENGTHS = [4, 6, 8, 10] as const;
 type CodeLength = (typeof LENGTHS)[number];
@@ -135,16 +141,31 @@ const UrlForm = memo<{
 
   return (
     <div>
-      <h1 className="text-[40px] leading-[1.08] font-medium tracking-[-0.02em] text-balance text-foreground sm:text-5xl lg:text-[56px] lg:tracking-[-0.03em]">
-        Make your links tiny
+      <h1 className="text-[44px] leading-[1.02] font-medium tracking-[-0.02em] text-foreground sm:text-[56px] lg:text-[64px] lg:tracking-[-0.03em]">
+        {HEADLINE.map((line, l) => (
+          <Fragment key={l}>
+            {l > 0 && <br />}
+            {line.map((word, w) => (
+              <Fragment key={word}>
+                {w > 0 && " "}
+                <span
+                  className="inline-block animate-word"
+                  style={{ animationDelay: `${80 + (l * 2 + w) * 55}ms` }}
+                >
+                  {word}
+                </span>
+              </Fragment>
+            ))}
+          </Fragment>
+        ))}
       </h1>
-      <p className="mt-4 max-w-[28rem] text-lg leading-7 text-subtle">
+      <p className="mt-5 max-w-[28rem] animate-rise text-lg leading-7 text-subtle [animation-delay:320ms]">
         Paste a long URL and get a short one. Free, no account needed. Links
         are saved in this browser and only open here.
       </p>
 
       {/* Main input row */}
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+      <div className="mt-8 flex animate-rise flex-col gap-3 [animation-delay:440ms] sm:flex-row">
         <Input
           type="url"
           value={inputUrl}
@@ -174,7 +195,7 @@ const UrlForm = memo<{
       </div>
 
       {/* Advanced options */}
-      <div className="mt-4">
+      <div className="mt-4 animate-rise [animation-delay:520ms]">
         <button
           type="button"
           aria-expanded={showAdvanced}
@@ -199,7 +220,7 @@ const UrlForm = memo<{
               <label htmlFor="alias" className={fieldLabel}>
                 Custom alias
               </label>
-              <div className="flex h-10 items-center rounded-lg border border-input bg-card transition-[border-color,box-shadow] duration-150 ease-snap focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/12">
+              <div className="flex h-10 items-center rounded-lg border border-input bg-card transition-[border-color,box-shadow] duration-150 ease-snap focus-within:border-vinyl focus-within:ring-4 focus-within:ring-vinyl/12">
                 <span className="pl-3 font-mono text-sm text-muted-foreground">
                   {window.location.host}/
                 </span>
@@ -265,7 +286,7 @@ const UrlForm = memo<{
                 className={disclosure}
               >
                 UTM tracking
-                {hasUtm && <span className="text-xs text-primary">On</span>}
+                {hasUtm && <span className="text-xs text-vinyl-ink">On</span>}
                 <ChevronDown
                   className={cn(
                     "size-4 text-muted-foreground transition-transform duration-200 ease-snap",
