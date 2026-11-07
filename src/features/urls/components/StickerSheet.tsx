@@ -1,6 +1,6 @@
 import { memo, useState } from "react";
 import { Copy } from "lucide-react";
-import { sileo } from "sileo";
+import { toast } from "sonner";
 import { CuriousGlobeSticker, SparklesSticker } from "stick-it-up";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -40,13 +40,11 @@ const StickerSheet = memo<{ url?: ShortenedUrl }>(({ url }) => {
   const handleCopy = async () => {
     const ok = await copyToClipboard(shortUrl);
     if (ok) {
-      sileo.success({
-        title: "Short URL copied",
+      toast.success("Short URL copied", {
         description: `${shortUrl} is now on your clipboard`,
       });
     } else {
-      sileo.error({
-        title: "Copy failed",
+      toast.error("Copy failed", {
         description:
           "Your browser blocked clipboard access — try selecting the URL manually",
       });

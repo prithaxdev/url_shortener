@@ -8,7 +8,7 @@ import {
   getCompression,
   splitShortUrl,
 } from "../utils";
-import { sileo } from "sileo";
+import { toast } from "sonner";
 import { Copy, ExternalLink, StickyNote, Trash2 } from "lucide-react";
 import { memo, useState } from "react";
 import LinkSticker from "./LinkSticker";
@@ -42,13 +42,11 @@ const UrlCard = memo<{
   const handleCopy = async () => {
     const ok = await copyToClipboard(url.shortUrl);
     if (ok) {
-      sileo.success({
-        title: "Short URL copied",
+      toast.success("Short URL copied", {
         description: `${url.shortUrl} is now on your clipboard`,
       });
     } else {
-      sileo.error({
-        title: "Copy failed",
+      toast.error("Copy failed", {
         description:
           "Your browser blocked clipboard access — try selecting the URL manually",
       });
@@ -58,8 +56,7 @@ const UrlCard = memo<{
   const handleCopyOriginal = async () => {
     const ok = await copyToClipboard(url.originalUrl);
     if (ok) {
-      sileo.info({
-        title: "Original URL copied",
+      toast.info("Original URL copied", {
         description: "Full destination link is on your clipboard",
       });
     }
@@ -67,8 +64,7 @@ const UrlCard = memo<{
 
   const handleVisit = () => {
     if (isExpired) {
-      sileo.warning({
-        title: "This link has expired",
+      toast.warning("This link has expired", {
         description: "Shorten the URL again to get a fresh active link",
       });
       return;
@@ -176,8 +172,7 @@ const UrlCard = memo<{
         confirmVariant="destructive"
         onConfirm={() => {
           onDelete(url.id);
-          sileo.success({
-            title: "Link deleted",
+          toast.success("Link deleted", {
             description: `${url.shortUrl} has been removed from your list`,
           });
         }}

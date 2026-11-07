@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, SlidersHorizontal, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { UrlCreateOptions, ShortenResult } from "../types";
-import { sileo } from "sileo";
+import { toast } from "sonner";
 
 // Two fixed lines, so the wrap never depends on which font has loaded
 const HEADLINE = [
@@ -112,8 +112,7 @@ const UrlForm = memo<{
     const result = await onSubmit(inputUrl.trim(), options);
 
     if (result.success) {
-      sileo.success({
-        title: "Link zapped",
+      toast.success("Link zapped", {
         description: `${result.shortUrl} is ready`,
       });
       setInputUrl("");
@@ -126,13 +125,11 @@ const UrlForm = memo<{
       const isAlreadyExists = result.error.includes("already shortened") ||
         result.error.includes("already taken");
       if (isAlreadyExists) {
-        sileo.warning({
-          title: "Already shortened",
+        toast.warning("Already shortened", {
           description: result.error,
         });
       } else {
-        sileo.error({
-          title: "Couldn't zap that",
+        toast.error("Couldn't zap that", {
           description: result.error,
         });
       }
