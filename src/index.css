@@ -235,6 +235,10 @@
   .sticker-faded .sticker-face {
     background: #a3a2a8;
   }
+  /* Hovering delete starts peeling the sticker off */
+  [data-slot="confirm-dialog"]:has([data-slot="confirm"]:hover) .sticker {
+    --peel: 14px;
+  }
 }
 
 /* Respect reduced motion */

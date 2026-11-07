@@ -167,7 +167,12 @@ const UrlCard = memo<{
         open={openConfirm}
         onOpenChange={setOpenConfirm}
         title="Delete this link?"
-        description={`${domain}${code} will be removed from this browser. This can't be undone.`}
+        description="This short link will stop opening and be removed from this browser. This can't be undone."
+        preview={
+          <LinkSticker size="sm" faded={isExpired} className="-rotate-2">
+            {code}
+          </LinkSticker>
+        }
         confirmText="Delete"
         confirmVariant="destructive"
         onConfirm={() => {
